@@ -3,57 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Exercice de Conjugaison</title>
+    <title>Entraînement Conjugaison</title>
     <style>
-        body { font-family: sans-serif; margin: 20px; background-color: #f4f7f6; }
-        h1 { text-align: center; color: #2c3e50; }
+        /* Design général */
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 20px; 
+            background-color: #f0f2f5; 
+            color: #333;
+        }
         
+        h1 { text-align: center; color: #2c3e50; margin-bottom: 30px; }
+        
+        /* Conteneur des deux tableaux */
         .container { 
             display: flex; 
             justify-content: center; 
-            gap: 20px; 
+            gap: 40px; 
             flex-wrap: wrap; 
         }
 
         table { 
             border-collapse: collapse; 
             background: white; 
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 20px;
         }
 
         th, td { 
-            border: 1px solid #ddd; 
-            padding: 12px; 
+            border: 1px solid #dee2e6; 
+            padding: 15px; 
             text-align: left; 
         }
 
-        th { background-color: #3498db; color: white; }
-
-        input { 
-            border: 1px solid #ccc; 
-            padding: 8px; 
-            border-radius: 4px;
-            width: 150px;
+        th { 
+            background-color: #4a69bd; 
+            color: white; 
+            text-transform: uppercase;
+            font-size: 0.9rem;
         }
 
-        .correct { background-color: #d4edda !important; border-color: #28a745; }
-        .incorrect { background-color: #f8d7da !important; border-color: #dc3545; }
+        /* Style des cases de saisie (Plus grandes) */
+        input { 
+            border: 2px solid #bdc3c7; 
+            padding: 10px; 
+            border-radius: 5px;
+            width: 180px;
+            font-size: 1.2rem; /* Police agrandie pour l'élève */
+            font-weight: bold;
+            outline: none;
+            transition: border-color 0.3s;
+        }
 
-        .controls { text-align: center; margin-top: 30px; }
+        input:focus { border-color: #4a69bd; background-color: #f8f9fa; }
+
+        /* Couleurs de correction */
+        .correct { background-color: #d4edda !important; border-color: #28a745 !important; color: #155724; }
+        .incorrect { background-color: #f8d7da !important; border-color: #dc3545 !important; color: #721c24; }
+
+        /* Zone de contrôle et Score */
+        .controls { text-align: center; margin-top: 40px; padding-bottom: 50px; }
+        
+        #resultat { 
+            font-size: 1.8rem; 
+            font-weight: bold; 
+            margin-bottom: 20px; 
+            min-height: 2rem;
+        }
+
         button { 
-            padding: 10px 20px; 
-            font-size: 16px; 
+            padding: 15px 40px; 
+            font-size: 1.1rem; 
             cursor: pointer; 
             background-color: #2ecc71; 
             color: white; 
             border: none; 
-            border-radius: 5px;
+            border-radius: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.2s, background-color 0.2s;
         }
+
+        button:hover { background-color: #27ae60; transform: translateY(-2px); }
+        button:active { transform: translateY(0); }
+
+        /* Soulignement spécifique pour les rappels orthographiques */
+        u { text-decoration-color: #e74c3c; text-decoration-thickness: 2px; }
     </style>
 </head>
 <body>
 
-    <h1>Entraînement : Présent de l'indicatif</h1>
+    <h1>Exercice de Conjugaison</h1>
 
     <div class="container">
         <table>
@@ -64,8 +105,7 @@
                     <th>Réponse</th>
                 </tr>
             </thead>
-            <tbody id="table1">
-                </tbody>
+            <tbody id="table1"></tbody>
         </table>
 
         <table>
@@ -76,17 +116,18 @@
                     <th>Réponse</th>
                 </tr>
             </thead>
-            <tbody id="table2">
-            </tbody>
+            <tbody id="table2"></tbody>
         </table>
     </div>
 
     <div class="controls">
-        <button onclick="verifier()">Vérifier les réponses</button>
+        <div id="resultat"></div>
+        <button onclick="verifier()">Vérifier mes réponses</button>
     </div>
 
     <script>
-        // MODÈLE DE DONNÉES : Modifiez facilement les verbes ici
+        // --- MODÈLE DE DONNÉES (À modifier pour vos futurs exercices) ---
+        // Utilisez <u>...</u> pour souligner une lettre
         const exercices = [
             { v: "ADV<u>E</u>RTIR*", p: "2", r: "adviertes" },
             { v: "ALRM<u>O</u>ZAR", p: "6", r: "almuerzan" },
@@ -111,6 +152,7 @@
             { v: "DESTRUÍR", p: "2", r: "destruyes" }
         ];
 
+        // Génération des tableaux à l'ouverture
         function genererTableaux() {
             const t1 = document.getElementById('table1');
             const t2 = document.getElementById('table2');
@@ -119,25 +161,58 @@
                 const row = `<tr>
                     <td>${ex.v}</td>
                     <td>${ex.p}</td>
-                    <td><input type="text" data-ans="${ex.r}" id="input-${index}"></td>
+                    <td>
+                        <input type="text" 
+                               id="input-${index}" 
+                               autocomplete="off" 
+                               spellcheck="false"
+                               onkeydown="if(event.key==='Enter') passerSuivant(${index})">
+                    </td>
                 </tr>`;
                 if (index < 10) t1.innerHTML += row;
                 else t2.innerHTML += row;
             });
         }
 
-        function verifier() {
-            exercices.forEach((ex, index) => {
-                const input = document.getElementById(`input-${index}`);
-                if (input.value.trim().toLowerCase() === ex.r.toLowerCase()) {
-                    input.className = "correct";
-                } else {
-                    input.className = "incorrect";
-                }
-            });
+        // Fonction pour passer à la ligne suivante avec Entrée
+        function passerSuivant(index) {
+            const suivant = document.getElementById(`input-${index + 1}`);
+            if (suivant) suivant.focus();
         }
 
-        genererTableaux();
+        // Fonction de vérification et calcul du score
+        function verifier() {
+            let score = 0;
+            exercices.forEach((ex, index) => {
+                const input = document.getElementById(`input-${index}`);
+                const reponseEleve = input.value.trim().toLowerCase();
+                const reponseAttendue = ex.r.toLowerCase();
+
+                if (reponseEleve === reponseAttendue) {
+                    input.classList.add("correct");
+                    input.classList.remove("incorrect");
+                    score++;
+                } else {
+                    input.classList.add("incorrect");
+                    input.classList.remove("correct");
+                }
+            });
+
+            const zoneScore = document.getElementById('resultat');
+            zoneScore.innerHTML = `Score : ${score} / ${exercices.length}`;
+            
+            if (score === exercices.length) {
+                zoneScore.style.color = "#27ae60";
+                zoneScore.innerHTML += " - Excellent ! 🎉";
+            } else if (score >= exercices.length / 2) {
+                zoneScore.style.color = "#d35400";
+                zoneScore.innerHTML += " - Courage, encore un effort !";
+            } else {
+                zoneScore.style.color = "#c0392b";
+            }
+        }
+
+        window.onload = genererTableaux;
     </script>
 </body>
 </html>
