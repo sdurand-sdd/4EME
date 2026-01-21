@@ -1,1 +1,143 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercice de Conjugaison</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; background-color: #f4f7f6; }
+        h1 { text-align: center; color: #2c3e50; }
+        
+        .container { 
+            display: flex; 
+            justify-content: center; 
+            gap: 20px; 
+            flex-wrap: wrap; 
+        }
 
+        table { 
+            border-collapse: collapse; 
+            background: white; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        th, td { 
+            border: 1px solid #ddd; 
+            padding: 12px; 
+            text-align: left; 
+        }
+
+        th { background-color: #3498db; color: white; }
+
+        input { 
+            border: 1px solid #ccc; 
+            padding: 8px; 
+            border-radius: 4px;
+            width: 150px;
+        }
+
+        .correct { background-color: #d4edda !important; border-color: #28a745; }
+        .incorrect { background-color: #f8d7da !important; border-color: #dc3545; }
+
+        .controls { text-align: center; margin-top: 30px; }
+        button { 
+            padding: 10px 20px; 
+            font-size: 16px; 
+            cursor: pointer; 
+            background-color: #2ecc71; 
+            color: white; 
+            border: none; 
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Entraînement : Présent de l'indicatif</h1>
+
+    <div class="container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Infinitif</th>
+                    <th>Personne</th>
+                    <th>Réponse</th>
+                </tr>
+            </thead>
+            <tbody id="table1">
+                </tbody>
+        </table>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Infinitif</th>
+                    <th>Personne</th>
+                    <th>Réponse</th>
+                </tr>
+            </thead>
+            <tbody id="table2">
+            </tbody>
+        </table>
+    </div>
+
+    <div class="controls">
+        <button onclick="verifier()">Vérifier les réponses</button>
+    </div>
+
+    <script>
+        // MODÈLE DE DONNÉES : Modifiez facilement les verbes ici
+        const exercices = [
+            { v: "Chanter", p: "1ère sing. (Je)", r: "chante" },
+            { v: "Finir", p: "2ème sing. (Tu)", r: "finis" },
+            { v: "Prendre", p: "3ème sing. (Il)", r: "prend" },
+            { v: "Aller", p: "1ère plur. (Nous)", r: "allons" },
+            { v: "Vouloir", p: "2ème plur. (Vous)", r: "voulez" },
+            { v: "Manger", p: "3ème plur. (Ils)", r: "mangent" },
+            { v: "Avoir", p: "1ère sing. (J')", r: "ai" },
+            { v: "Être", p: "2ème sing. (Tu)", r: "es" },
+            { v: "Faire", p: "3ème sing. (Elle)", r: "fait" },
+            { v: "Pouvoir", p: "1ère plur. (Nous)", r: "pouvons" },
+            // Suite pour le tableau 2
+            { v: "Venir", p: "2ème plur. (Vous)", r: "venez" },
+            { v: "Dire", p: "3ème plur. (Ils)", r: "disent" },
+            { v: "Partir", p: "1ère sing. (Je)", r: "pars" },
+            { v: "Mettre", p: "2ème sing. (Tu)", r: "mets" },
+            { v: "Savoir", p: "3ème sing. (Il)", r: "sait" },
+            { v: "Voir", p: "1ère plur. (Nous)", r: "voyons" },
+            { v: "Boire", p: "2ème plur. (Vous)", r: "buvez" },
+            { v: "Lire", p: "3ème plur. (Elles)", r: "lisent" },
+            { v: "Écrire", p: "1ère sing. (J')", r: "écris" },
+            { v: "Devoir", p: "2ème sing. (Tu)", r: "dois" }
+        ];
+
+        function genererTableaux() {
+            const t1 = document.getElementById('table1');
+            const t2 = document.getElementById('table2');
+
+            exercices.forEach((ex, index) => {
+                const row = `<tr>
+                    <td>${ex.v}</td>
+                    <td>${ex.p}</td>
+                    <td><input type="text" data-ans="${ex.r}" id="input-${index}"></td>
+                </tr>`;
+                if (index < 10) t1.innerHTML += row;
+                else t2.innerHTML += row;
+            });
+        }
+
+        function verifier() {
+            exercices.forEach((ex, index) => {
+                const input = document.getElementById(`input-${index}`);
+                if (input.value.trim().toLowerCase() === ex.r.toLowerCase()) {
+                    input.className = "correct";
+                } else {
+                    input.className = "incorrect";
+                }
+            });
+        }
+
+        genererTableaux();
+    </script>
+</body>
+</html>
